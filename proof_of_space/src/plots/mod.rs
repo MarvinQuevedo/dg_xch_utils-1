@@ -27,7 +27,8 @@ pub struct K32Meta3 {
     m0: u64,
     m1: u64,
 }
-trait FromMeta4 {
+
+pub trait FromMeta4 {
     fn from_meta4(s: K32Meta4) -> Vec<Self>
     where
         Self: Sized;

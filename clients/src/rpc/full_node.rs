@@ -740,7 +740,7 @@ async fn test_extended_functions() {
             None,
             None,
             None,
-            None,
+            100,
             None,
         )
         .await
@@ -767,23 +767,30 @@ async fn test_extended_functions() {
         assert!(coin_hints.values().any(|v| v == h));
     }
     let by_hints = fnc
-        .get_coin_records_by_hints(&hints, true, 4540000, 4542825)
+        .get_coin_records_by_hints_paginated(
+            &hints,
+            Some(true),
+            Some(4540000),
+            Some(4542825),
+            2,
+            None,
+        )
         .await
         .unwrap();
-    assert!(!by_hints.is_empty());
+    assert!(!by_hints.0.is_empty());
     let by_puz = fnc
         .get_coin_records_by_puzzle_hashes_paginated(
             &puz_hashes,
             Some(true),
             Some(4540000),
             Some(4542825),
-            Some(2),
+            2,
             None,
         )
         .await
         .unwrap();
     assert!(!by_puz.0.is_empty());
-    assert!(by_puz.0.iter().all(|v| by_hints.contains(v)));
+    assert!(by_puz.0.iter().all(|v| by_hints.0.contains(v)));
     assert!(!fnc
         .get_puzzles_and_solutions_by_names(&coin_ids, Some(true), Some(4540000), Some(4542825))
         .await

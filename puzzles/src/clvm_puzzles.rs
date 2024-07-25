@@ -305,6 +305,12 @@ pub fn create_absorb_spend(
                 "Coin puzzleHash and Puzzle Treehash are not Equal",
             ));
         }
+        if full_puzzle.to_program().tree_hash() != coin.puzzle_hash {
+            return Err(Error::new(
+                ErrorKind::InvalidInput,
+                "Coin puzzleHash and Puzzle Treehash are not Equal",
+            ));
+        }
         if get_inner_puzzle_from_puzzle(&full_puzzle_program)?.is_none() {
             return Err(Error::new(
                 ErrorKind::InvalidInput,

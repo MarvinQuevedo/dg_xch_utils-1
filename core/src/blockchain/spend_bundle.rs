@@ -24,6 +24,9 @@ impl SpendBundle {
         let mut signatures = vec![];
         for bundle in bundles {
             coin_spends.extend(bundle.coin_spends);
+            if bundle.aggregated_signature == Default::default() {
+                continue;
+            }
             signatures.push(bundle.aggregated_signature.try_into()?);
         }
         let aggregated_signature = if signatures.is_empty() {

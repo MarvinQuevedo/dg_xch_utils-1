@@ -22,7 +22,7 @@ pub struct TransactionRecord {
     #[serde(alias = "type")]
     pub transaction_type: u32,
     pub name: Bytes32,
-    pub memos: Vec<(Bytes32, Vec<Vec<u8>>)>,
+    //pub memos: Vec<(Bytes32, Vec<Vec<u8>>)>,// TODO: fix the parse memos
 }
 
 pub enum TransactionType {

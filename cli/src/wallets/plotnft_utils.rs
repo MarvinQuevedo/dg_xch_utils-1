@@ -273,7 +273,7 @@ impl PlotNFTWallet {
             wallet_id: 1,
             sent_to: vec![],
             trade_id: None,
-            memos: vec![],
+            //memos: vec![],
             transaction_type: TransactionType::OutgoingTx as u32,
             name,
         };
@@ -372,7 +372,7 @@ where
         wallet_id: 1,
         sent_to: vec![],
         trade_id: None,
-        memos: vec![],
+        //memos: vec![],
         transaction_type: TransactionType::OutgoingTx as u32,
         name,
     };

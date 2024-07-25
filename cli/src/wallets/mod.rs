@@ -360,7 +360,7 @@ pub trait Wallet<T: WalletStore + Send + Sync, C> {
             trade_id: None,
             transaction_type: TransactionType::OutgoingTx as u32,
             name,
-            memos,
+            //memos,
         })
     }
     #[allow(clippy::too_many_arguments)]

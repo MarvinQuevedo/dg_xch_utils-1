@@ -161,6 +161,7 @@ pub async fn test_farmer_ws_client() {
         ssl_info: None,
         software_version: None,
         additional_headers: None,
+        protocol_version: ChiaProtocolVersion::Chia0_0_36,
     });
     let shared_state = Arc::new(FarmerSharedState::<()> {
         ..Default::default()

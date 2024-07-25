@@ -1,6 +1,8 @@
 use async_trait::async_trait;
-use dg_xch_core::blockchain::announcement::Announcement;
+use dg_xch_core::blockchain::assert_coin_announcement::AssertCoinAnnouncement;
+use dg_xch_core::blockchain::assert_puzzle_announcement::AssertPuzzleAnnouncement;
 use dg_xch_core::blockchain::coin::Coin;
+use dg_xch_core::blockchain::payment::Payment;
 use dg_xch_core::blockchain::pending_payment::PendingPayment;
 use dg_xch_core::blockchain::transaction_record::TransactionRecord;
 use dg_xch_core::blockchain::wallet_balance::WalletBalance;
@@ -36,10 +38,10 @@ pub trait WalletAPI {
     async fn create_signed_transaction(
         &self,
         wallet_id: u32,
-        additions: Vec<Coin>,
+        additions: Vec<Payment>,
         coins: Vec<Coin>,
-        coin_announcements: Vec<Announcement>,
-        puzzle_announcements: Vec<Announcement>,
+        coin_announcements: Vec<AssertCoinAnnouncement>,
+        puzzle_announcements: Vec<AssertPuzzleAnnouncement>,
         fee: u64,
     ) -> Result<TransactionRecord, Error>;
 }

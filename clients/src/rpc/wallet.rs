@@ -1,7 +1,9 @@
 use crate::api::wallet::WalletAPI;
 use async_trait::async_trait;
-use dg_xch_core::blockchain::announcement::Announcement;
+use dg_xch_core::blockchain::assert_coin_announcement::AssertCoinAnnouncement;
+use dg_xch_core::blockchain::assert_puzzle_announcement::AssertPuzzleAnnouncement;
 use dg_xch_core::blockchain::coin::Coin;
+use dg_xch_core::blockchain::payment::Payment;
 use dg_xch_core::blockchain::pending_payment::PendingPayment;
 use dg_xch_core::blockchain::transaction_record::TransactionRecord;
 use dg_xch_core::blockchain::wallet_balance::WalletBalance;
@@ -46,6 +48,7 @@ impl WalletAPI for WalletClient {
     async fn log_in(&self, wallet_fingerprint: u32) -> Result<u32, Error> {
         let mut request_body = Map::new();
         request_body.insert("wallet_fingerprint".to_string(), json!(wallet_fingerprint));
+        request_body.insert("fingerprint".to_string(), json!(wallet_fingerprint));
         Ok(post::<LoginResp>(
             &self.client,
             &get_url(self.host.as_str(), self.port, "log_in"),
@@ -58,6 +61,7 @@ impl WalletAPI for WalletClient {
     async fn log_in_and_skip(&self, wallet_fingerprint: u32) -> Result<u32, Error> {
         let mut request_body = Map::new();
         request_body.insert("wallet_fingerprint".to_string(), json!(wallet_fingerprint));
+        request_body.insert("fingerprint".to_string(), json!(wallet_fingerprint));
         Ok(post::<LoginResp>(
             &self.client,
             &get_url(self.host.as_str(), self.port, "log_in_and_skip"),
@@ -163,10 +167,10 @@ impl WalletAPI for WalletClient {
     async fn create_signed_transaction(
         &self,
         wallet_id: u32,
-        additions: Vec<Coin>,
+        additions: Vec<Payment>,
         coins: Vec<Coin>,
-        coin_announcements: Vec<Announcement>,
-        puzzle_announcements: Vec<Announcement>,
+        coin_announcements: Vec<AssertCoinAnnouncement>,
+        puzzle_announcements: Vec<AssertPuzzleAnnouncement>,
         fee: u64,
     ) -> Result<TransactionRecord, Error> {
         let mut request_body = Map::new();
@@ -179,6 +183,7 @@ impl WalletAPI for WalletClient {
             json!(puzzle_announcements),
         );
         request_body.insert("fee".to_string(), json!(fee));
+        println!("{:?}", json!(request_body));
         Ok(post::<SignedTransactionRecordResp>(
             &self.client,
             &get_url(self.host.as_str(), self.port, "create_signed_transaction"),

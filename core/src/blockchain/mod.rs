@@ -1,4 +1,6 @@
 pub mod announcement;
+pub mod assert_coin_announcement;
+pub mod assert_puzzle_announcement;
 pub mod block_record;
 pub mod blockchain_state;
 pub mod challenge_block_info;
@@ -20,6 +22,7 @@ pub mod mempool_item;
 pub mod network_info;
 pub mod npc;
 pub mod npc_result;
+pub mod payment;
 pub mod peer_info;
 pub mod pending_payment;
 pub mod pool_target;

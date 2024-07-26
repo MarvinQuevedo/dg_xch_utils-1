@@ -1,5 +1,5 @@
 use super::unsized_bytes::UnsizedBytes;
-use crate::blockchain::sized_bytes::{prep_hex_str, SizedBytes};
+use crate::blockchain::sized_bytes::SizedBytes;
 use crate::{
     blockchain::sized_bytes::Bytes32,
     clvm::{program::Program, utils::encode_bigint},

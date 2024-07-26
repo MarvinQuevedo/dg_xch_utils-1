@@ -21,7 +21,6 @@ impl AssertCoinAnnouncement {
         Self {
             message,
             morph_bytes,
-
             coin_id: coin_id,
         }
     }

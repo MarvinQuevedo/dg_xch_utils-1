@@ -20,6 +20,18 @@ pub struct DerivationRecord {
     pub wallet_id: u32,
     pub hardened: bool,
 }
+impl Clone for DerivationRecord {
+    fn clone(&self) -> Self {
+        DerivationRecord {
+            index: self.index,
+            puzzle_hash: self.puzzle_hash,
+            pubkey: self.pubkey,
+            wallet_type: self.wallet_type,
+            wallet_id: self.wallet_id,
+            hardened: self.hardened,
+        }
+    }
+}
 
 pub async fn sign_coin_spend<F, Fut>(
     coin_spend: CoinSpend,

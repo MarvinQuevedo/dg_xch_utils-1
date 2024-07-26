@@ -111,7 +111,12 @@ pub async fn migrate_plot_nft(
         format!("https://{}", target_pool)
     };
     let pool_info = get_pool_info(&pool_url).await?;
-    let pool_wallet = PlotNFTWallet::new(key_from_mnemonic_str(mnemonic)?, client.as_ref());
+    let pool_wallet = PlotNFTWallet::new(
+        key_from_mnemonic_str(mnemonic)?,
+        client.as_ref(),
+        None,
+        None,
+    );
     info!("Searching for PlotNFT with LauncherID: {launcher_id}");
     if let Some(mut plot_nft) = get_plotnft_by_launcher_id(client.clone(), launcher_id).await? {
         info!("Checking if PlotNFT needs migration");

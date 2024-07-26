@@ -24,6 +24,7 @@ use dg_xch_puzzles::utils::{
 };
 use dg_xch_serialize::{hash_256, ChiaProtocolVersion, ChiaSerialize};
 use log::{debug, info};
+use memory_wallet::MemoryWalletStore;
 use num_traits::ToPrimitive;
 use std::cmp::max;
 use std::collections::{HashMap, HashSet};
@@ -41,6 +42,15 @@ pub mod plotnft_utils;
 pub struct SecretKeyStore {
     keys: DashMap<Bytes48, Bytes32>,
 }
+
+impl Clone for SecretKeyStore {
+    fn clone(&self) -> Self {
+        SecretKeyStore {
+            keys: self.keys.clone(),
+        }
+    }
+}
+
 impl SecretKeyStore {
     pub fn save_secret_key(&self, secret_key: &SecretKey) -> Option<Bytes32> {
         self.keys.insert(
@@ -67,6 +77,20 @@ pub struct WalletInfo<T: WalletStore> {
     pub master_sk: SecretKey,
     pub wallet_store: Arc<Mutex<T>>,
     pub data: String, //JSON String to Store Extra Data for Wallets
+}
+
+impl Clone for WalletInfo<MemoryWalletStore> {
+    fn clone(&self) -> Self {
+        WalletInfo {
+            id: self.id,
+            name: self.name.clone(),
+            wallet_type: self.wallet_type,
+            constants: self.constants.clone(),
+            master_sk: self.master_sk.clone(),
+            wallet_store: self.wallet_store.clone(),
+            data: self.data.clone(),
+        }
+    }
 }
 
 #[async_trait]
@@ -112,7 +136,7 @@ pub trait WalletStore {
 
 #[async_trait]
 pub trait Wallet<T: WalletStore + Send + Sync, C> {
-    fn create(info: WalletInfo<T>, config: C) -> Self;
+    fn create(info: WalletInfo<T>, config: C, sync_only_unspent: Option<bool>) -> Self;
     fn name(&self) -> &str;
     async fn sync(&self) -> Result<bool, Error>;
     fn is_synced(&self) -> bool;
@@ -363,6 +387,7 @@ pub trait Wallet<T: WalletStore + Send + Sync, C> {
             //memos,
         })
     }
+
     #[allow(clippy::too_many_arguments)]
     async fn generate_unsigned_transaction(
         &self,

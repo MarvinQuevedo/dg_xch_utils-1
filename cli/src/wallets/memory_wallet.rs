@@ -1,7 +1,9 @@
 use crate::wallets::common::DerivationRecord;
 use crate::wallets::{SecretKeyStore, Wallet, WalletInfo, WalletStore};
 use async_trait::async_trait;
+use bip39::Mnemonic;
 use blst::min_pk::SecretKey;
+use chia_bls::SecretKey as ChiaSecretKey;
 use dashmap::DashMap;
 use dg_xch_clients::rpc::full_node::FullnodeClient;
 use dg_xch_clients::ClientSSLConfig;
@@ -19,7 +21,8 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::collections::{HashMap, HashSet};
 use std::io::{Error, ErrorKind};
-use std::sync::atomic::{AtomicU32, Ordering};
+use std::str::FromStr;
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -28,6 +31,20 @@ pub struct MemoryWalletConfig {
     pub fullnode_port: u16,
     pub fullnode_ssl_path: Option<ClientSSLConfig>,
     pub additional_headers: Option<HashMap<String, String>>,
+}
+impl Clone for MemoryWalletConfig {
+    fn clone(&self) -> Self {
+        Self {
+            fullnode_host: self.fullnode_host.clone(),
+            fullnode_port: self.fullnode_port,
+            fullnode_ssl_path: self.fullnode_ssl_path.clone(),
+            additional_headers: self.additional_headers.clone(),
+        }
+    }
+
+    fn clone_from(&mut self, source: &Self) {
+        *self = source.clone()
+    }
 }
 
 pub struct MemoryWalletStore {
@@ -38,6 +55,23 @@ pub struct MemoryWalletStore {
     derivation_records: DashMap<Bytes32, DerivationRecord>,
     keys_for_ph: DashMap<Bytes32, (Bytes32, Bytes48)>,
     secret_key_store: SecretKeyStore,
+}
+impl Clone for MemoryWalletStore {
+    fn clone(&self) -> Self {
+        Self {
+            master_sk: self.master_sk.clone(),
+            current_index: AtomicU32::new(self.current_index.load(Ordering::Relaxed)),
+            spent_coins: self.spent_coins.clone(),
+            unspent_coins: self.unspent_coins.clone(),
+            keys_for_ph: self.keys_for_ph.clone(),
+            derivation_records: self.derivation_records.clone(),
+            secret_key_store: self.secret_key_store.clone(),
+        }
+    }
+
+    fn clone_from(&mut self, source: &Self) {
+        *self = source.clone()
+    }
 }
 impl MemoryWalletStore {
     pub fn new(secret_key: SecretKey, starting_index: u32) -> Self {
@@ -429,7 +463,11 @@ pub struct MemoryWallet {
 impl MemoryWallet {}
 #[async_trait]
 impl Wallet<MemoryWalletStore, MemoryWalletConfig> for MemoryWallet {
-    fn create(info: WalletInfo<MemoryWalletStore>, config: MemoryWalletConfig) -> Self {
+    fn create(
+        info: WalletInfo<MemoryWalletStore>,
+        config: MemoryWalletConfig,
+        _: Option<bool>,
+    ) -> Self {
         let fullnode_client = FullnodeClient::new(
             &config.fullnode_host.clone(),
             config.fullnode_port,

@@ -117,4 +117,8 @@ impl SpendBundle {
                 .into();
         Ok(self)
     }
+
+    pub fn is_empty(&self) -> bool {
+        return self.coin_spends.is_empty();
+    }
 }

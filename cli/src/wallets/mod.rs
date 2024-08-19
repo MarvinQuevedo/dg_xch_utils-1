@@ -362,11 +362,11 @@ pub trait Wallet<T: WalletStore + Send + Sync, C> {
         } else {
             assert_eq!(output_amount, input_amount);
         }
-        let memos = self.compute_memos(&spend_bundle)?;
+        /*    let memos = self.compute_memos(&spend_bundle)?;
         let memos = memos
             .into_iter()
             .map(|v| (v.0, v.1))
-            .collect::<Vec<(Bytes32, Vec<Vec<u8>>)>>();
+            .collect::<Vec<(Bytes32, Vec<Vec<u8>>)>>(); */
         let name = spend_bundle.name();
         Ok(TransactionRecord {
             confirmed_at_height: 0,

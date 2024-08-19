@@ -1,9 +1,7 @@
 use crate::wallets::common::DerivationRecord;
 use crate::wallets::{SecretKeyStore, Wallet, WalletInfo, WalletStore};
 use async_trait::async_trait;
-use bip39::Mnemonic;
 use blst::min_pk::SecretKey;
-use chia_bls::SecretKey as ChiaSecretKey;
 use dashmap::DashMap;
 use dg_xch_clients::rpc::full_node::FullnodeClient;
 use dg_xch_clients::ClientSSLConfig;
@@ -21,8 +19,7 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use std::collections::{HashMap, HashSet};
 use std::io::{Error, ErrorKind};
-use std::str::FromStr;
-use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
+use std::sync::atomic::{AtomicU32, Ordering};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 

@@ -506,6 +506,78 @@ pub async fn get_current_pool_state(
     Ok((saved_state, saved_spend))
 }
 
+pub async fn get_history_pool_state(
+    client: Arc<FullnodeClient>,
+    launcher_id: &Bytes32,
+) -> Result<Vec<(PoolState, CoinSpend)>, Error> {
+    let mut last_spend: CoinSpend;
+    let mut saved_state: PoolState;
+    let mut result: Vec<(PoolState, CoinSpend)> = vec![];
+    match client.get_coin_record_by_name(launcher_id).await? {
+        Some(lc) if lc.spent => {
+            last_spend = client.get_coin_spend(&lc).await?;
+            match solution_to_pool_state(&last_spend)? {
+                Some(state) => {
+                    saved_state = state;
+                    result.push((saved_state.clone(), last_spend.clone()));
+                }
+                None => {
+                    return Err(Error::new(
+                        ErrorKind::InvalidData,
+                        "Failed to Read Pool State",
+                    ));
+                }
+            }
+        }
+        Some(_) => {
+            return Err(Error::new(
+                ErrorKind::InvalidData,
+                format!("Genesis coin {} not spent", &launcher_id.to_string()),
+            ));
+        }
+        None => {
+            return Err(Error::new(
+                ErrorKind::NotFound,
+                format!("Can not find genesis coin {}", &launcher_id),
+            ));
+        }
+    }
+    let mut saved_spend: CoinSpend = last_spend.clone();
+    let mut last_not_none_state: PoolState = saved_state.clone();
+    loop {
+        match get_most_recent_singleton_coin_from_coin_spend(&last_spend)? {
+            None => {
+                return Err(Error::new(
+                    ErrorKind::NotFound,
+                    "Failed to find recent singleton from coin Record",
+                ));
+            }
+            Some(next_coin) => match client.get_coin_record_by_name(&next_coin.name()).await? {
+                None => {
+                    return Err(Error::new(
+                        ErrorKind::NotFound,
+                        "Failed to find Coin Record",
+                    ));
+                }
+                Some(next_coin_record) => {
+                    if !next_coin_record.spent {
+                        break;
+                    }
+                    last_spend = client.get_coin_spend(&next_coin_record).await?;
+                    if let Ok(Some(pool_state)) = solution_to_pool_state(&last_spend) {
+                        last_not_none_state = pool_state;
+
+                        result.push((last_not_none_state.clone(), last_spend.clone()));
+                    }
+                    saved_spend = last_spend.clone();
+                    saved_state = last_not_none_state.clone();
+                }
+            },
+        }
+    }
+    Ok(result)
+}
+
 pub async fn scrounge_for_plotnft_by_key(
     client: Arc<FullnodeClient>,
     master_secret_key: &SecretKey,

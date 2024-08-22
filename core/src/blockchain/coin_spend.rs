@@ -20,6 +20,20 @@ pub struct CoinSpend {
     pub solution: SerializedProgram,
 }
 
+impl Default for CoinSpend {
+    fn default() -> Self {
+        Self {
+            coin: Coin {
+                parent_coin_info: Bytes32::default(),
+                puzzle_hash: Bytes32::default(),
+                amount: 0,
+            },
+            puzzle_reveal: SerializedProgram::from(Program::null()),
+            solution: SerializedProgram::from(Program::null()),
+        }
+    }
+}
+
 impl CoinSpend {
     pub fn additions(&self) -> Result<Vec<Coin>, Error> {
         additions_for_solution(

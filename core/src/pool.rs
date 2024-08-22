@@ -39,6 +39,18 @@ pub struct PoolState {
     pub pool_url: Option<String>,
     pub relative_lock_height: u32,
 }
+impl Default for PoolState {
+    fn default() -> Self {
+        Self {
+            version: Default::default(),
+            state: Default::default(),
+            target_puzzle_hash: Default::default(),
+            owner_pubkey: Default::default(),
+            pool_url: Default::default(),
+            relative_lock_height: Default::default(),
+        }
+    }
+}
 
 impl PoolState {
     pub fn from_extra_data_program(program: &Program) -> Result<Self, Error> {

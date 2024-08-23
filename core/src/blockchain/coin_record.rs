@@ -14,6 +14,19 @@ pub struct CoinRecord {
     pub spent: bool,
 }
 
+impl CoinRecord {
+    pub fn from(paginated_coin_record: PaginatedCoinRecord) -> CoinRecord {
+        CoinRecord {
+            coin: paginated_coin_record.coin,
+            confirmed_block_index: paginated_coin_record.confirmed_block_index,
+            spent_block_index: paginated_coin_record.spent_block_index,
+            coinbase: paginated_coin_record.coinbase,
+            timestamp: paginated_coin_record.timestamp,
+            spent: paginated_coin_record.spent,
+        }
+    }
+}
+
 //Not Standard Protocol
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Debug)]
 pub struct PaginatedCoinRecord {

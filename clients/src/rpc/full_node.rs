@@ -671,8 +671,6 @@ impl FullnodeExtAPI for FullnodeClient {
             self.port,
             "get_coin_records_by_puzzle_hashes_paginated",
         );
-        info!("url: {}", url);
-        info!("request_body: {:?}", request_body);
         let resp = post::<PaginatedCoinRecordAryResp>(
             &self.client,
             &url,

@@ -6,3 +6,11 @@ use serde::{Deserialize, Serialize};
 pub struct VdfOutput {
     pub data: UnsizedBytes,
 }
+
+impl Default for VdfOutput {
+    fn default() -> Self {
+        Self {
+            data: Default::default(),
+        }
+    }
+}

@@ -18,6 +18,7 @@ use dg_xch_core::blockchain::tx_status::TXStatus;
 use dg_xch_core::blockchain::unfinished_header_block::UnfinishedHeaderBlock;
 use dg_xch_core::protocols::full_node::BlockCountMetrics;
 use dg_xch_core::protocols::full_node::FeeEstimate;
+use log::info;
 use reqwest::Client;
 use serde_json::{json, Map};
 use std::collections::HashMap;
@@ -664,13 +665,17 @@ impl FullnodeExtAPI for FullnodeClient {
         if let Some(li) = last_id {
             request_body.insert("last_id".to_string(), json!(li));
         }
+
+        let url = get_url(
+            self.host.as_str(),
+            self.port,
+            "get_coin_records_by_puzzle_hashes_paginated",
+        );
+        info!("url: {}", url);
+        info!("request_body: {:?}", request_body);
         let resp = post::<PaginatedCoinRecordAryResp>(
             &self.client,
-            &get_url(
-                self.host.as_str(),
-                self.port,
-                "get_coin_records_by_puzzle_hashes_paginated",
-            ),
+            &url,
             &request_body,
             &self.additional_headers,
         )

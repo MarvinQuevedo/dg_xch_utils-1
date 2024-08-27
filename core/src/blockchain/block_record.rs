@@ -33,3 +33,41 @@ pub struct BlockRecord {
     pub finished_reward_slot_hashes: Option<Vec<Bytes32>>,
     pub sub_epoch_summary_included: Option<SubEpochSummary>,
 }
+
+impl Default for BlockRecord {
+    fn default() -> Self {
+        Self {
+            header_hash: Default::default(),
+            prev_hash: Default::default(),
+            height: 0,
+            weight: Default::default(),
+            total_iters: Default::default(),
+            signage_point_index: Default::default(),
+            challenge_vdf_output: Default::default(),
+            infused_challenge_vdf_output: Default::default(),
+            reward_infusion_new_challenge: Default::default(),
+            challenge_block_info_hash: Default::default(),
+            sub_slot_iters: Default::default(),
+            pool_puzzle_hash: Default::default(),
+            farmer_puzzle_hash: Default::default(),
+            required_iters: Default::default(),
+            deficit: Default::default(),
+            overflow: Default::default(),
+            prev_transaction_block_height: Default::default(),
+            timestamp: None,
+            prev_transaction_block_hash: Default::default(),
+            fees: Default::default(),
+            reward_claims_incorporated: Default::default(),
+            finished_challenge_slot_hashes: Default::default(),
+            finished_infused_challenge_slot_hashes: Default::default(),
+            finished_reward_slot_hashes: Default::default(),
+            sub_epoch_summary_included: Default::default(),
+        }
+    }
+}
+
+impl BlockRecord {
+    pub fn is_transaction_block(&self) -> bool {
+        self.timestamp.is_some()
+    }
+}

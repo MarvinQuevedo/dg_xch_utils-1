@@ -18,7 +18,6 @@ use dg_xch_core::blockchain::tx_status::TXStatus;
 use dg_xch_core::blockchain::unfinished_header_block::UnfinishedHeaderBlock;
 use dg_xch_core::protocols::full_node::BlockCountMetrics;
 use dg_xch_core::protocols::full_node::FeeEstimate;
-use log::info;
 use reqwest::Client;
 use serde_json::{json, Map};
 use std::collections::HashMap;
@@ -735,7 +734,7 @@ impl FullnodeExtAPI for FullnodeClient {
 #[tokio::test]
 async fn test_extended_functions() {
     let fnc = FullnodeClient::new("localhost", 8555, 10, None, &None);
-    let by_puz = fnc
+    let _ = fnc
         .get_coin_records_by_puzzle_hashes_paginated(
             &[Bytes32::from(
                 "1c69feee1fb42ffa6c60fcc222c3aa8fb6cc719937a83f5aa068dc7045e0a633",
